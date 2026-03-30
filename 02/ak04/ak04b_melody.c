@@ -97,6 +97,8 @@ int main(int argc, char **argv){
     format.rate = SAMPLE_RATE;
     format.byte_format = AO_FMT_LITTLE;
 
+	//int wav_driver = ao_driver_id("wav"); // these two lines export the sound as wav
+	//device = ao_open_file(wav_driver, "Megalovania.wav", 1, &format, NULL);
     device = ao_open_live(default_driver, &format, NULL);
     if (device == NULL) {
         fprintf(stderr, "Error opening device.\n");
