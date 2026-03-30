@@ -19,16 +19,16 @@ LIBs in Use: libao 1.2.0 URL:https://xiph.org/ao/
 
 // base tones in midi nr: https://inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
 #define C  0
-#define CS 1   // C#
+#define CS 1
 #define D  2
-#define DS 3   // D#
+#define DS 3
 #define E  4
 #define F  5
-#define FS 6   // F#
+#define FS 6
 #define G  7
-#define GS 8   // G#
+#define GS 8
 #define A  9
-#define AS 10  // A#
+#define AS 10
 #define B  11
 
 
