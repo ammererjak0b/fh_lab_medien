@@ -5,15 +5,15 @@ LDFLAGS += $(shell pkg-config --libs ao) -lm
 all: Release
 
 Debug: CFLAGS += -g
-Debug: AK04a.exe AK04b.exe
+Debug: V02a.exe V02b.exe
 
-Release: AK04a.exe AK04b.exe
+Release: V02a.exe V02b.exe
 
-AK04a.exe: ao_example.c
-	$(CC) $(CFLAGS) ao_example.c -o AK04a.exe $(LDFLAGS)
+V02a.exe: ao_example.c
+	$(CC) $(CFLAGS) ao_example.c -o V02a.exe $(LDFLAGS)
 
-AK04b.exe: ak04b_melody.c
-	$(CC) $(CFLAGS) ak04b_melody.c -o AK04b.exe $(LDFLAGS)
+V02b.exe: b.c
+	$(CC) $(CFLAGS) b.c -o V02b.exe $(LDFLAGS)
 
 clean:
-	rm -f AK04a.exe AK04b.exe
+	rm -f V02a.exe V02b.exe
