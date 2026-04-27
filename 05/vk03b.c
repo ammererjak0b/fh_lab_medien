@@ -32,19 +32,17 @@ int main(int argc, char *argv[]) {
     }
 
     const char *path = argv[1];
-
-    // converts arg string to int: https://www.geeksforgeeks.org/atoi-function-in-c/
-    int width = atoi(argv[2]);
+    int width = atoi(argv[2]); // converts arg string to int: https://www.geeksforgeeks.org/atoi-function-in-c/
     int height = atoi(argv[3]);
 
     // 4:2:0 divides width and height by 2, so both must be even
     if (width <= 0 || height <= 0 || width % 2 != 0 || height % 2 != 0) {
-        fprintf(stderr, "width and height must be positive and even\n");
+        fprintf(stderr, "width and height have to be positive and even\n");
         return 1;
     }
 
     int frameCount = 0;
-    Frame **frames = readYuv(path, width, height, &frameCount); // ** = pointer to pointer (array of Frame pointers)
+    Frame **frames = readYuv(path, width, height, &frameCount); // ** = pointer to pointer (array of frame pointers)
     if (frames == NULL) {
         return 1;
     }
@@ -54,6 +52,7 @@ int main(int argc, char *argv[]) {
     // a) verification: avoid frame 0, row 0, col 0 as per task
     // printing the file offset so the values can be cross-checked in ghex
     int verifyFrame = 1;
+
     int verifyRow = 10;
     int verifyCol = 15;
 

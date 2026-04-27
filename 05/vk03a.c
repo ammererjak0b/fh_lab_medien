@@ -26,9 +26,7 @@ int main(int argc, char *argv[]) {
     }
 
     const char *path = argv[1];
-
-    // converts arg string to int: https://www.geeksforgeeks.org/atoi-function-in-c/
-    int width = atoi(argv[2]);
+    int width = atoi(argv[2]); // converts arg string to int: https://www.geeksforgeeks.org/atoi-function-in-c/
     int height = atoi(argv[3]);
 
     // 4:2:0 divides width and height by 2, so both must be even
