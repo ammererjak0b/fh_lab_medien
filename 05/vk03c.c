@@ -1,5 +1,5 @@
 /*
-    LB-VK 03c) extend 03b with PSNR
+    LB-VK 03c) extend 03b with MSE
     Author: Ammerer Jakob
 */
 
@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <limits.h> // for INT_MAX
-#include <math.h>   // for log10, compile with -lm
 
 #define BLOCK_SIZE 16 // 16x16 block (from Task)
 #define SEARCH_RANGE 8 // + - 8px search range, 16x16 block that shifts within a 32x32 area in the reference frame
@@ -25,7 +24,6 @@ void freeFrame(Frame *frame);
 Frame **readYuv(const char *path, int width, int height, int *frameCount);
 int computeSad(const Frame *currentFrame, const Frame *refFrame, int blockX, int blockY, int refX, int refY, int width);
 double computeMse(const Frame *currentFrame, const Frame *refFrame, int blockX, int blockY, int refX, int refY, int width); // mean squared error over 16x16 Y block
-double mseToPsnr(double mse); // convert MSE to PSNR in dB, returns -1 if MSE is 0 (perfect match)
 void printResidual(const Frame *currentFrame, const Frame *refFrame, int blockX, int blockY, int refX, int refY, int width);
 
 int main(int argc, char *argv[]) {
@@ -67,7 +65,7 @@ int main(int argc, char *argv[]) {
         size_t chromaSize = (size_t)(width / 2) * (height / 2);
         size_t frameSize = ySize + 2 * chromaSize;
 
-        // AI-Usage: derive correct byte offset formulas for Y, Cb and Cr in raw IYUV, Claude Sonnet 4.6
+        // AI-Usage: correct byte offset formulas for Y, Cb and Cr in raw YUV, Claude Sonnet 4.6
         long yOffset = (long)verifyFrame * (long)frameSize + verifyRow * width + verifyCol;
         long cbOffset = (long)verifyFrame * (long)frameSize + (long)ySize + (verifyRow / 2) * (width / 2) + verifyCol / 2;
         long crOffset = cbOffset + (long)chromaSize;
@@ -129,10 +127,9 @@ int main(int argc, char *argv[]) {
     printf("MC residual at (%d, %d):\n", blockX + bestSadDx, blockY + bestSadDy);
     printResidual(frames[currentFrameIndex], frames[referenceFrameIndex],blockX, blockY, blockX + bestSadDx, blockY + bestSadDy, width);
 
-    // c) PSNR, same search as SAD but maximize PSNR instead of minimize SAD
-    // AI-Usage: Helped with the PSNR calculation and how to handle "infinite" scores when two pixel blocks are identical, Claude Sonnet 4.6
-    int bestPsnrDx = 0;
-    int bestPsnrDy = 0;
+    // c) MSE, same search as SAD but minimize mean squared error instead
+    int bestMseDx = 0;
+    int bestMseDy = 0;
     double bestMse = -1.0; // -1 = not set yet, first value always replaces it
 
     for (int i = -SEARCH_RANGE; i <= SEARCH_RANGE; i++) {      // dy
@@ -148,26 +145,20 @@ int main(int argc, char *argv[]) {
 
             if (bestMse < 0.0 || mse < bestMse) { // first pass or new minimum
                 bestMse = mse;
-                bestPsnrDx = j;
-                bestPsnrDy = i;
+                bestMseDx = j;
+                bestMseDy = i;
             }
         }
     }
 
-    double bestPsnr = mseToPsnr(bestMse); // convert best MSE to PSNR once search is done
-
-    printf("\nME PSNR\n");
-    printf("MV\tdx=%d\tdy=%d\n", bestPsnrDx, bestPsnrDy);
+    printf("\nME MSE\n");
+    printf("MV\tdx=%d\tdy=%d\n", bestMseDx, bestMseDy);
     printf("MSE\t%.4f\n", bestMse);
-    if (bestPsnr < 0.0) { // mseToPsnr returns -1 when MSE=0 (perfect match = infinite PSNR)
-        printf("PSNR\tinf\n");
-    } else {
-        printf("PSNR\t%.4f dB\n", bestPsnr);
-    }
-    printf("MC residual at (%d, %d):\n", blockX + bestPsnrDx, blockY + bestPsnrDy);
-    printResidual(frames[currentFrameIndex], frames[referenceFrameIndex],blockX, blockY, blockX + bestPsnrDx, blockY + bestPsnrDy, width);
+    printf("MC residual at (%d, %d):\n", blockX + bestMseDx, blockY + bestMseDy);
+    printResidual(frames[currentFrameIndex], frames[referenceFrameIndex],blockX, blockY, blockX + bestMseDx, blockY + bestMseDy, width);
+
     printf("\nSAD MV\tdx=%d\tdy=%d\n", bestSadDx, bestSadDy);
-    printf("PSNR MV\tdx=%d\tdy=%d\n", bestPsnrDx, bestPsnrDy);
+    printf("MSE MV\tdx=%d\tdy=%d\n", bestMseDx, bestMseDy);
 
     // free all
     for (int i = 0; i < frameCount; i++) {
@@ -284,14 +275,6 @@ double computeMse(const Frame *currentFrame, const Frame *refFrame, int blockX, 
     }
 
     return sumSq / (BLOCK_SIZE * BLOCK_SIZE); // divide by pixel count to get mean
-}
-
-// PSNR from MSE, pixel range 0-255, higher PSNR = better match
-double mseToPsnr(double mse) {
-    if (mse == 0.0) {
-        return -1.0; // perfect match, PSNR would be infinite
-    }
-    return 10.0 * log10((255.0 * 255.0) / mse); // 255 is max 8-bit pixel value
 }
 
 // residual = current - reference, can be negative, shows prediction error per pixel
