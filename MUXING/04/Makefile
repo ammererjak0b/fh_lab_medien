@@ -1,7 +1,7 @@
 CC = gcc
 
 CFLAGS = -Wall -I../libs/include
-LDFLAGS = -L../libs/lib -Wl,-Bstatic -lx264 -Wl,-Bdynamic -ldl -lm -lpthread
+LDFLAGS = -L./libs/lib -Wl,-Bstatic -lx264 -Wl,-Bdynamic -ldl -lm -lpthread
 
 all: MTM04a.exe
 

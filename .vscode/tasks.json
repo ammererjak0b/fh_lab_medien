@@ -5,7 +5,7 @@
             "label": "make",
             "type": "shell",
             "command": "make",
-            "args": ["CFLAGS=-g -Wall -Wextra"],
+            "args": ["CFLAGS=-g -Wall -Wextra -I./libs/include"],
             "options": { "cwd": "${fileDirname}" },
             "group": { "kind": "build", "isDefault": true },
             "problemMatcher": ["$gcc"]
