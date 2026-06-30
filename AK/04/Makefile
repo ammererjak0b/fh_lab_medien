@@ -10,10 +10,10 @@ Debug: AK04a.exe AK04b.exe
 Release: AK04a.exe AK04b.exe
 
 AK04a.exe: AK04a.c
-	$(CC) $(CFLAGS) a.c -o AK04a.exe $(LDFLAGS)
+	$(CC) $(CFLAGS) AK04a.c -o AK04a.exe $(LDFLAGS)
 
 AK04b.exe: AK04b.c
-	$(CC) $(CFLAGS) b.c -o AK04b.exe $(LDFLAGS)
+	$(CC) $(CFLAGS) AK04b.c -o AK04b.exe $(LDFLAGS)
 
 clean:
 	rm -f AK04a.exe AK04b.exe
