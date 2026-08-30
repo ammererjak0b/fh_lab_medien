@@ -29,6 +29,7 @@
  *  also used to format print statements so they are readable
  *  Line 219 (see comment)
  *  Line 256 (see comment)
+ *  Proper formatting print statements
  * 
  * EXAMPLE CALL: ./OKUEa.exe foreman.yuv 352 288 out.h264
  */

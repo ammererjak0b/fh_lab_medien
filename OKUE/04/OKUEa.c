@@ -40,6 +40,7 @@
  *  also used to format print statements so they are readable
  *  Line 99  (comment)
  *  Line 104 (comment)
+ *  Print Statements for prettier formatting
  * 
  * EXAMPLE CALL: ./OKUEa.exe foreman.yuv 352 288 out.h264
  */
