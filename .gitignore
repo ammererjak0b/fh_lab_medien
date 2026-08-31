@@ -1,0 +1,15 @@
+# Build artifacts
+*.exe
+*.o
+*.obj
+*.out
+*.elf
+*.hex
+
+# Raw/huge sample media (not source)
+*.yuv
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
